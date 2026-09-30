@@ -1,0 +1,48 @@
+{
+    "inventory": [
+        {
+            "phc": "PHC-A",
+            "medicine": "ORS",
+            "current_stock": 320,
+            "daily_consumption": 35,
+            "incoming_stock": 100,
+            "expiry_days": 45
+        },
+
+        {
+            "phc": "PHC-A",
+            "medicine": "Paracetamol",
+            "current_stock": 420,
+            "daily_consumption": 50,
+            "incoming_stock": 100,
+            "expiry_days": 120
+        },
+
+        {
+            "phc": "PHC-A",
+            "medicine": "Antimalarial",
+            "current_stock": 75,
+            "daily_consumption": 20,
+            "incoming_stock": 50,
+            "expiry_days": 25
+        },
+
+        {
+            "phc": "PHC-A",
+            "medicine": "Azithromycin",
+            "current_stock": 120,
+            "daily_consumption": 15,
+            "incoming_stock": 50,
+            "expiry_days": 90
+        },
+
+        {
+            "phc": "PHC-A",
+            "medicine": "IV Fluids",
+            "current_stock": 80,
+            "daily_consumption": 12,
+            "incoming_stock": 40,
+            "expiry_days": 20
+        }
+    ]
+}

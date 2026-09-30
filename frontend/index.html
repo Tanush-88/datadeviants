@@ -1,0 +1,4344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PHC Intelligence | AI Healthcare Command Center</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: #07111f;
+    color: #e8f1f8;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ================= BACKGROUND ================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: rgba(0, 210, 190, 0.08);
+    filter: blur(120px);
+    border-radius: 50%;
+    top: -200px;
+    right: -150px;
+    z-index: -1;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: rgba(80, 90, 255, 0.07);
+    filter: blur(120px);
+    border-radius: 50%;
+    bottom: -200px;
+    left: -150px;
+    z-index: -1;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 245px;
+    height: 100vh;
+    background: rgba(5, 15, 28, 0.94);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 25px 15px;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 10px 30px;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00d5c0, #4b6cff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 21px;
+}
+
+.logo h2 {
+    font-size: 18px;
+}
+
+.logo span {
+    display: block;
+    font-size: 10px;
+    color: #7d93a8;
+    margin-top: 3px;
+}
+
+.menu-title {
+    font-size: 10px;
+    color: #617588;
+    padding: 0 12px;
+    margin-bottom: 10px;
+    letter-spacing: 1.5px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 14px;
+    margin: 5px 0;
+    border-radius: 10px;
+    color: #8fa3b5;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 14px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(0, 210, 190, 0.10);
+    color: #5ce6d7;
+}
+
+.nav-icon {
+    width: 25px;
+    text-align: center;
+}
+
+/* ================= MAIN ================= */
+
+.main {
+    margin-left: 245px;
+    padding: 25px 35px;
+}
+
+/* ================= TOPBAR ================= */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.page-title h1 {
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.page-title p {
+    color: #71879a;
+    font-size: 13px;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    padding: 10px 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 25px;
+    font-size: 12px;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #20d9a3;
+    box-shadow: 0 0 12px #20d9a3;
+    animation: pulse 1.7s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+}
+
+/* ================= SECTIONS ================= */
+
+.section {
+    display: none;
+    animation: fadeIn 0.35s ease;
+}
+
+.section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= CARDS ================= */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.card {
+    background: rgba(13, 27, 44, 0.75);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 15px;
+    padding: 20px;
+    transition: 0.3s;
+    backdrop-filter: blur(15px);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0,210,190,0.25);
+}
+
+.metric-label {
+    color: #71879a;
+    font-size: 12px;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+.metric-change {
+    font-size: 11px;
+}
+
+.green {
+    color: #36dca7;
+}
+
+.yellow {
+    color: #f4c95d;
+}
+
+.red {
+    color: #ff6877;
+}
+
+.blue {
+    color: #69a7ff;
+}
+
+/* ================= SECTION HEADER ================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0 15px;
+}
+
+.section-header h2 {
+    font-size: 19px;
+}
+
+.section-header p {
+    font-size: 12px;
+    color: #71879a;
+    margin-top: 4px;
+}
+
+/* ================= ALERT ================= */
+
+.alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(
+        100deg,
+        rgba(255,87,102,0.12),
+        rgba(255,255,255,0.03)
+    );
+    border: 1px solid rgba(255,87,102,0.25);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 22px;
+}
+
+.alert-left {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.alert-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    background: rgba(255,87,102,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.alert h3 {
+    font-size: 14px;
+}
+
+.alert p {
+    font-size: 12px;
+    color: #8da0b1;
+    margin-top: 4px;
+}
+
+.btn {
+    border: none;
+    background: #00bfae;
+    color: #06141c;
+    padding: 9px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+/* ================= TWO COLUMNS ================= */
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+}
+
+/* ================= CHART ================= */
+
+.chart-card {
+    background: rgba(13,27,44,0.75);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.chart-container {
+    height: 300px;
+    position: relative;
+}
+
+/* ================= DISEASE ================= */
+
+.disease-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.disease-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #8da0b1;
+    padding: 10px 15px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-size: 12px;
+}
+
+.disease-btn:hover,
+.disease-btn.active {
+    background: rgba(0,210,190,0.12);
+    border-color: rgba(0,210,190,0.35);
+    color: #5ce6d7;
+}
+
+.disease-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.disease-card {
+    background: rgba(13,27,44,0.75);
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 17px;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.disease-card:hover {
+    transform: translateY(-3px);
+}
+
+.disease-icon {
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.disease-card h3 {
+    font-size: 13px;
+}
+
+.disease-card p {
+    color: #71879a;
+    font-size: 10px;
+    margin-top: 5px;
+}
+
+.risk {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 9px;
+}
+
+.risk-high {
+    color: #ff7b86;
+    background: rgba(255,80,100,0.10);
+}
+
+.risk-watch {
+    color: #f3cc63;
+    background: rgba(243,204,99,0.10);
+}
+
+.risk-stable {
+    color: #43d9a8;
+    background: rgba(67,217,168,0.10);
+}
+
+/* ================= MEDICINE ================= */
+
+.medicine-row {
+    margin: 18px 0;
+}
+
+.medicine-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #162536;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg,#00bfae,#5ce6d7);
+}
+
+.progress-bar.warning {
+    background: linear-gradient(90deg,#e4a934,#f6d76a);
+}
+
+.progress-bar.danger {
+    background: linear-gradient(90deg,#ef5261,#ff8790);
+}
+
+/* ================= AI ================= */
+
+.ai-box {
+    padding: 25px;
+    border-radius: 15px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,210,190,0.10),
+            rgba(70,90,255,0.10)
+        );
+    border: 1px solid rgba(0,210,190,0.15);
+}
+
+.ai-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.ai-title span {
+    background: rgba(0,210,190,0.12);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.prediction {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+}
+
+.prediction-box {
+    background: rgba(0,0,0,0.15);
+    padding: 17px;
+    border-radius: 10px;
+}
+
+.prediction-box small {
+    color: #72879a;
+}
+
+.prediction-box strong {
+    display: block;
+    font-size: 20px;
+    margin-top: 7px;
+}
+
+/* ================= ACTION TABLE ================= */
+
+.action-row {
+    display: grid;
+    grid-template-columns: 45px 1fr 100px 100px;
+    gap: 15px;
+    align-items: center;
+    padding: 16px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.action-number {
+    color: #617588;
+}
+
+.action-title {
+    font-size: 12px;
+}
+
+.action-sub {
+    color: #71879a;
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+.badge {
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 9px;
+    text-align: center;
+}
+
+.badge-critical {
+    background: rgba(255,70,90,0.12);
+    color: #ff7180;
+}
+
+.badge-high {
+    background: rgba(245,188,60,0.12);
+    color: #f2cb64;
+}
+
+.badge-low {
+    background: rgba(60,215,165,0.12);
+    color: #45d7a8;
+}
+
+/* ================= FILTER ================= */
+
+select {
+    background: #0e2032;
+    color: #dce8f1;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 9px 12px;
+    border-radius: 8px;
+    outline: none;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1100px) {
+
+    .card-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .disease-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .three-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:750px) {
+
+    .sidebar {
+        width: 70px;
+        padding: 15px 8px;
+    }
+
+    .logo h2,
+    .logo span,
+    .nav-item span:not(.nav-icon),
+    .menu-title {
+        display: none;
+    }
+
+    .logo {
+        justify-content: center;
+        padding: 0 0 25px;
+    }
+
+    .main {
+        margin-left: 70px;
+        padding: 20px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .card-grid,
+    .disease-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .prediction {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =====================================================
+   MEDICINE REFERENCE TABLE
+===================================================== */
+
+.medicine-reference-card {
+    overflow: hidden;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+}
+
+.medicine-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.medicine-table th {
+    text-align: left;
+    padding: 14px 12px;
+    color: #b8c9d8;
+    background: rgba(255,255,255,0.035);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+}
+
+.medicine-table td {
+    padding: 15px 12px;
+    color: #8fa3b5;
+    line-height: 1.55;
+    vertical-align: top;
+    border-bottom: 1px solid rgba(255,255,255,0.055);
+}
+
+.medicine-table tbody tr:hover {
+    background: rgba(54,220,202,0.035);
+}
+
+.medicine-table td:first-child {
+    color: #e8f2f8;
+    min-width: 110px;
+}
+
+.warning-cell {
+    color: #d7bd79 !important;
+}
+
+.medicine-note {
+    padding: 7px 10px;
+    border: 1px solid rgba(54,220,202,0.22);
+    border-radius: 8px;
+    color: #6ee6d7;
+    font-size: 10px;
+    letter-spacing: .04em;
+}
+
+.inventory-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: #8197aa;
+    font-size: 12px;
+}
+
+.inventory-field strong {
+    color: #d8e5ee;
+    font-size: 13px;
+}
+
+.medicine-info-box {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(54,220,202,0.055);
+    border: 1px solid rgba(54,220,202,0.12);
+}
+
+.medicine-info-box strong {
+    color: #6ee6d7;
+    font-size: 12px;
+}
+
+.medicine-info-box p {
+    margin: 7px 0 0;
+    color: #8197aa;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+
+/* ================= LIVE MEDICINE INTELLIGENCE ================= */
+
+.live-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 18px 0 20px;
+}
+
+.live-control {
+    background: rgba(13, 27, 44, 0.75);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 13px;
+    padding: 16px;
+}
+
+.live-control label {
+    display: block;
+    margin-bottom: 7px;
+    color: #71879a;
+    font-size: 11px;
+}
+
+.live-control select {
+    width: 100%;
+    padding: 10px 12px;
+}
+
+.live-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    background: rgba(54,220,202,0.10);
+    color: #5ce6d7;
+    border: 1px solid rgba(54,220,202,0.16);
+}
+
+.redistribution-card {
+    margin-top: 20px;
+}
+
+.redistribution-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.redistribution-metric {
+    padding: 15px;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.022);
+    border: 1px solid rgba(255,255,255,0.055);
+}
+
+.redistribution-route {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.redistribution-empty {
+    color: #8197aa;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.sos-panel {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,104,119,0.24);
+    background: rgba(255,104,119,0.07);
+    color: #b8c5cf;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.sos-panel strong {
+    color: #ff6877;
+}
+
+@media(max-width:1100px) {
+    .redistribution-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width:750px) {
+    .live-controls,
+    .redistribution-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .redistribution-route {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🏥
+        </div>
+
+        <div>
+            <h2>PHC•INTEL</h2>
+            <span>AI HEALTHCARE SYSTEM</span>
+        </div>
+
+    </div>
+
+    <div class="menu-title">
+        MAIN
+    </div>
+
+    <div class="nav-item active" onclick="showSection('dashboard',this)">
+        <span class="nav-icon">⌂</span>
+        <span>Command Center</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('phc',this)">
+        <span class="nav-icon">🏥</span>
+        <span>PHC Intelligence</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('disease',this)">
+        <span class="nav-icon">🦠</span>
+        <span>Disease Intelligence</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('medicine',this)">
+        <span class="nav-icon">💊</span>
+        <span>Medicine Intelligence</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('analytics',this)">
+        <span class="nav-icon">📊</span>
+        <span>Analytics</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('prediction',this)">
+        <span class="nav-icon">🤖</span>
+        <span>AI Predictions</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('actions',this)">
+        <span class="nav-icon">🚨</span>
+        <span>Priority Actions</span>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="main">
+
+    <div class="topbar">
+
+        <div class="page-title">
+
+            <h1 id="pageHeading">
+                Healthcare Command Center
+            </h1>
+
+            <p id="pageDescription">
+                AI-powered monitoring of Primary Health Centre networks
+            </p>
+
+        </div>
+
+        <div class="system-status">
+
+            <div class="status-dot"></div>
+
+            AI ENGINE ACTIVE
+
+        </div>
+
+    </div>
+
+
+<!-- =====================================================
+     COMMAND CENTER
+===================================================== -->
+
+<section id="dashboard" class="section active">
+
+    <div class="alert">
+
+        <div class="alert-left">
+
+            <div class="alert-icon">
+                ⚠️
+            </div>
+
+            <div>
+
+                <h3>Early Warning Signal Detected</h3>
+
+                <p>
+                    Disease and medicine-demand monitoring requires attention.
+                </p>
+
+            </div>
+
+        </div>
+
+        <button class="btn" onclick="showSectionById('disease')">
+            VIEW DISEASE INTELLIGENCE →
+        </button>
+
+    </div>
+
+
+    <div class="card-grid">
+
+        <div class="card">
+
+            <div class="metric-label">
+                PHCs MONITORED
+            </div>
+
+<div class="metric-value" id="dashboardPhcCount">
+    —
+</div>
+
+            <div class="metric-change green">
+                ● Network connected
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="metric-label">
+                DISEASES TRACKED
+            </div>
+
+<div class="metric-value" id="dashboardDiseaseCount">
+    —
+</div>
+            <div class="metric-change blue">
+                Dengue → Viral Fever
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="metric-label">
+                MEDICINE WATCHLIST
+            </div>
+
+   <div class="metric-value" id="dashboardMedicineCount">
+    —
+</div>
+
+            <div class="metric-change yellow">
+                Requires monitoring
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="metric-label">
+                PRIORITY ALERTS
+            </div>
+
+<div class="metric-value red" id="dashboardAlertCount">
+    —
+</div>
+
+            <div class="metric-change red">
+                Needs review
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="two-col">
+
+        <div class="chart-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Network Health Overview</h2>
+                    <p>Illustrative monitoring view</p>
+                </div>
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="networkChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>System Signals</h2>
+                    <p>Current monitoring state</p>
+                </div>
+
+            </div>
+
+            <div class="medicine-row">
+
+                <div class="medicine-info">
+                    <span>PHC Connectivity</span>
+                    <span class="green">94%</span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" style="width:94%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="medicine-row">
+
+                <div class="medicine-info">
+                    <span>Data Availability</span>
+                    <span class="green">88%</span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" style="width:88%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="medicine-row">
+
+                <div class="medicine-info">
+                    <span>Medicine Monitoring</span>
+                    <span class="yellow">71%</span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar warning" style="width:71%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PHC INTELLIGENCE
+===================================================== -->
+
+<section id="phc" class="section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>🏥 PHC Intelligence</h2>
+            <p>Monitor PHC-level healthcare activity</p>
+        </div>
+
+        <select>
+            <option>All Regions</option>
+            <option>Maharashtra</option>
+            <option>Gadchiroli</option>
+        </select>
+
+    </div>
+
+
+    <div class="card-grid">
+
+        <div class="card">
+            <div class="metric-label">ACTIVE PHCs</div>
+            <div class="metric-value">124</div>
+            <div class="metric-change green">Operational</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">PATIENT FOOTFALL</div>
+            <div class="metric-value">—</div>
+            <div class="metric-change blue">Connect real-time data</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">PHCs ON WATCH</div>
+            <div class="metric-value yellow">18</div>
+            <div class="metric-change yellow">Requires monitoring</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">CRITICAL PHCs</div>
+            <div class="metric-value red">06</div>
+            <div class="metric-change red">Priority review</div>
+        </div>
+
+    </div>
+
+
+    <div class="chart-card">
+
+        <div class="section-header">
+            <div>
+                <h2>PHC Monitoring Distribution</h2>
+                <p>Illustrative interface — replace with actual PHC records</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="phcChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DISEASE INTELLIGENCE
+===================================================== -->
+
+<section id="disease" class="section">
+
+    <div class="section-header">
+
+        <div>
+            <h2>🦠 Disease Intelligence</h2>
+            <p>Track disease patterns and identify early warning signals</p>
+        </div>
+
+        <select id="districtFilter">
+
+            <option>All Districts</option>
+            <option>Gadchiroli</option>
+            <option>Nagpur</option>
+            <option>Pune</option>
+
+        </select>
+
+    </div>
+
+
+    <!-- DISEASE SELECTOR -->
+
+    <div class="disease-selector">
+
+        <button class="disease-btn active"
+                onclick="selectDisease('Dengue',this)">
+            🦟 Dengue
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Malaria',this)">
+            🦟 Malaria
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Chikungunya',this)">
+            🦠 Chikungunya
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Jaundice',this)">
+            🟡 Jaundice
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Typhoid',this)">
+            🦠 Typhoid
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Cold / Cough',this)">
+            🤧 Cold / Cough
+        </button>
+
+        <button class="disease-btn"
+                onclick="selectDisease('Viral Fever',this)">
+            🌡️ Viral Fever
+        </button>
+
+    </div>
+
+
+    <!-- DISEASE CARDS -->
+
+    <div class="disease-grid">
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Dengue')">
+
+            <div class="disease-icon">🦟</div>
+
+            <h3>Dengue</h3>
+
+            <p>Vector-borne disease</p>
+
+            <span class="risk risk-high">
+                HIGH WATCH
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Malaria')">
+
+            <div class="disease-icon">🦟</div>
+
+            <h3>Malaria</h3>
+
+            <p>Vector-borne disease</p>
+
+            <span class="risk risk-watch">
+                WATCH
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Chikungunya')">
+
+            <div class="disease-icon">🦠</div>
+
+            <h3>Chikungunya</h3>
+
+            <p>Vector-borne disease</p>
+
+            <span class="risk risk-watch">
+                WATCH
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Jaundice')">
+
+            <div class="disease-icon">🟡</div>
+
+            <h3>Jaundice</h3>
+
+            <p>Health condition monitoring</p>
+
+            <span class="risk risk-stable">
+                MONITOR
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Typhoid')">
+
+            <div class="disease-icon">🦠</div>
+
+            <h3>Typhoid</h3>
+
+            <p>Infectious disease</p>
+
+            <span class="risk risk-watch">
+                WATCH
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Cold / Cough')">
+
+            <div class="disease-icon">🤧</div>
+
+            <h3>Cold / Cough</h3>
+
+            <p>Respiratory symptoms</p>
+
+            <span class="risk risk-watch">
+                WATCH
+            </span>
+
+        </div>
+
+
+        <div class="disease-card"
+             onclick="selectDiseaseFromCard('Viral Fever')">
+
+            <div class="disease-icon">🌡️</div>
+
+            <h3>Viral Fever</h3>
+
+            <p>Fever-related monitoring</p>
+
+            <span class="risk risk-watch">
+                WATCH
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- DISEASE GRAPH -->
+
+    <div class="two-col">
+
+        <div class="chart-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 id="diseaseChartTitle">
+                        Dengue — Case Trend
+                    </h2>
+
+                    <p>
+                        Disease trend visualization
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="diseaseChart"></canvas>
+            </div>
+
+        </div>
+
+
+        <!-- DISEASE AI -->
+
+        <div class="ai-box">
+
+            <div class="ai-title">
+
+                <span>🤖</span>
+
+                <div>
+
+                    <h2 id="predictionDisease">
+                        Dengue
+                    </h2>
+
+                    <small>
+                        AI early-warning analysis
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="prediction">
+
+                <div class="prediction-box">
+
+                    <small>
+                        CURRENT SIGNAL
+                    </small>
+
+                    <strong id="currentSignal">
+                        Rising
+                    </strong>
+
+                </div>
+
+
+                <div class="prediction-box">
+
+                    <small>
+                        RISK LEVEL
+                    </small>
+
+                    <strong class="red">
+                        HIGH
+                    </strong>
+
+                </div>
+
+
+                <div class="prediction-box">
+
+                    <small>
+                        PREDICTION
+                    </small>
+
+                    <strong>
+                        Monitor
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <br>
+
+            <p style="color:#8ca0b1;font-size:12px;line-height:1.7">
+
+                The AI layer can combine disease cases,
+                patient footfall and medicine consumption
+                to identify abnormal patterns before a
+                potential surge becomes critical.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MEDICINE INTELLIGENCE
+===================================================== -->
+
+<section id="medicine" class="section">
+
+    <div class="section-header">
+        <div>
+            <h2>💊 Medicine Intelligence</h2>
+            <p>Medicine reference mapped to the disease conditions in the uploaded prototype dataset</p>
+        </div>
+
+        <select id="medicineFilter" onchange="filterMedicineTable(this.value)">
+            <option value="all">All Conditions</option>
+            <option value="typhoid">Typhoid</option><option value="dengue">Dengue</option><option value="chikungunya">Chikungunya</option><option value="jaundice">Jaundice</option><option value="malaria">Malaria</option><option value="cough">Cough</option><option value="cold">Cold</option><option value="viral fever">Viral Fever</option>
+        </select>
+    </div>
+
+    <!-- LIVE BACKEND CONTROLS -->
+    <div class="live-controls">
+
+        <div class="live-control">
+            <label for="phcSelector">SELECT PHC</label>
+            <select id="phcSelector" onchange="refreshMedicineView()">
+                <option value="">Loading PHCs...</option>
+            </select>
+        </div>
+
+        <div class="live-control">
+            <label for="medicineSelector">SELECT MEDICINE</label>
+            <select id="medicineSelector" onchange="refreshMedicineView()">
+                <option value="">Loading medicines...</option>
+            </select>
+        </div>
+
+    </div>
+
+<!-- =====================================================
+     OUTBREAK SIMULATION CONTROLS
+===================================================== -->
+
+<div
+    id="outbreakControls"
+    style="
+        margin: 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    "
+>
+
+    <button
+        id="outbreakButton"
+        class="btn"
+        type="button"
+        onclick="toggleOutbreakScenario()"
+        style="
+            background: #ff6675;
+            color: #06111d;
+        "
+    >
+        🚨 SIMULATE OUTBREAK SURGE
+    </button>
+
+
+    <button
+        id="resetScenarioButton"
+        class="btn"
+        type="button"
+        onclick="resetOutbreakScenario()"
+        style="
+            background: #173049;
+            color: #dbe9ef;
+            display: none;
+        "
+    >
+        ↩ RESET SCENARIO
+    </button>
+
+
+    <div
+        id="outbreakBanner"
+        style="
+            display: none;
+            padding: 9px 13px;
+            border-radius: 9px;
+            border: 1px solid rgba(255,102,117,.25);
+            background: rgba(255,102,117,.08);
+            color: #ff8792;
+            font-size: 11px;
+            font-weight: 800;
+        "
+    >
+        🚨 OUTBREAK SURGE ACTIVE · DEMAND ×2.5
+    </div>
+
+</div>
+    <div class="card-grid">
+
+        <div class="card">
+            <div class="metric-label">CONDITIONS MAPPED</div>
+            <div class="metric-value">8</div>
+            <div class="metric-change blue">From uploaded medicine dataset</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">MEDICINES / REGIMENS</div>
+            <div class="metric-value" id="medicineCount">—</div>
+            <div class="metric-change blue">Unique primary medication entries</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">INVENTORY STATUS</div>
+            <div class="metric-value yellow">LIVE</div>
+            <div class="metric-change yellow">Connect PHC stock data</div>
+        </div>
+
+        <div class="card">
+            <div class="metric-label">NLEM REFERENCE</div>
+            <div class="metric-value green">✓</div>
+            <div class="metric-change green">Reference dataset available</div>
+        </div>
+
+    </div>
+
+    <div class="card medicine-reference-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Medicine & Disease Reference</h2>
+                <p>Primary medications, medication class, warnings and supportive-care information from the uploaded CSV</p>
+            </div>
+
+            <div class="medicine-note">
+                Prototype reference • not a prescribing tool
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="medicine-table" id="medicineReferenceTable">
+                <thead>
+                    <tr>
+                        <th>Condition</th>
+                        <th>Primary Medications</th>
+                        <th>Medication Class / Action</th>
+                        <th>Critical Warnings / Contraindications</th>
+                        <th>Supportive Care</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td><strong>Typhoid</strong></td>
+                <td>Azithromycin, Ceftriaxone, Cefixime</td>
+                <td>Antibiotics (Target bacterial cell wall / protein synthesis)</td>
+                <td class="warning-cell">Must complete full course to prevent relapse and antibiotic resistance. Overuse leads to multi-drug resistance.</td>
+                <td>Paracetamol for fever, strict fluid replacement, soft/bland diet.</td>
+            </tr>
+            <tr>
+                <td><strong>Dengue</strong></td>
+                <td>Paracetamol (Acetaminophen) ONLY</td>
+                <td>Antipyretic and Analgesic (Fever and pain relief)</td>
+                <td class="warning-cell">STRICTLY AVOID NSAIDs (Ibuprofen, Aspirin, Diclofenac) due to severe risk of platelet destruction and fatal internal hemorrhage.</td>
+                <td>Aggressive oral/IV hydration (ORS, coconut water), close monitoring of platelet count and hematocrit.</td>
+            </tr>
+            <tr>
+                <td><strong>Chikungunya</strong></td>
+                <td>Paracetamol, NSAIDs (Naproxen, Ibuprofen - only after Dengue is ruled out)</td>
+                <td>Analgesics and Non-Steroidal Anti-inflammatory Drugs (For severe debilitating joint pain)</td>
+                <td class="warning-cell">Do not administer NSAIDs until Dengue virus infection has been fully excluded to avoid bleeding risks.</td>
+                <td>Rest, heavy fluid intake, physiotherapy for prolonged post-viral arthritis.</td>
+            </tr>
+            <tr>
+                <td><strong>Jaundice</strong></td>
+                <td>No specific curative medicine; supportive liver protectants (e.g., Ursodeoxycholic Acid under strict guidance if indicated)</td>
+                <td>Supportive / Symptomatic management</td>
+                <td class="warning-cell">AVOID hepatotoxic drugs (including high-dose Paracetamol, alcohol, and heavy traditional self-medication) that strain the liver.</td>
+                <td>High-carbohydrate, ultra-low-fat diet, absolute rest, hydration.</td>
+            </tr>
+            <tr>
+                <td><strong>Malaria</strong></td>
+                <td>Artemether + Lumefantrine (ACT), Chloroquine, Primaquine</td>
+                <td>Antimalarials (Clears blood-stage parasites and prevents relapses in liver stage)</td>
+                <td class="warning-cell">Primaquine requires testing for G6PD deficiency prior to use due to severe risk of acute hemolytic anemia.</td>
+                <td>Antipyretics for cyclic fever spikes, monitoring for severe anemia or cerebral malaria signs.</td>
+            </tr>
+            <tr>
+                <td><strong>Cough</strong></td>
+                <td>Dextromethorphan (Dry cough), Guaifenesin / Ambroxol (Wet cough)</td>
+                <td>Antitussives (Suppress cough center) / Expectorants (Thin and loosen mucus)</td>
+                <td class="warning-cell">Do not give dextromethorphan to productive (wet) coughs as it traps secretions. Avoid codeine-based syrups without prescription.</td>
+                <td>Steam inhalation, warm fluids, honey (for adults and children over 1 year).</td>
+            </tr>
+            <tr>
+                <td><strong>Cold</strong></td>
+                <td>Cetirizine, Loratadine, Oxymetazoline (nasal spray), Pseudoephedrine</td>
+                <td>Antihistamines (Reduce allergy symptoms/runny nose) / Decongestants (Narrow blood vessels in nasal passages)</td>
+                <td class="warning-cell">Nasal decongestant sprays must not be used for more than 3-5 consecutive days to prevent rebound congestion (rhinitis medicamentosa).</td>
+                <td>Saline nasal drops, hydration, rest.</td>
+            </tr>
+            <tr>
+                <td><strong>Viral Fever</strong></td>
+                <td>Paracetamol, Ibuprofen</td>
+                <td>Antipyretics / NSAIDs</td>
+                <td class="warning-cell">Antibiotics are completely useless against viral infections and cause unnecessary side effects and microbial resistance.</td>
+                <td>Hydration, physical cooling (lukewarm sponging if fever is dangerously high), rest.</td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="two-col">
+
+        <div class="chart-card">
+            <div class="section-header">
+                <div>
+                    <h2>Medicine Demand</h2>
+                    <p id="medicineForecastSubtitle">7-day ML demand forecast for the selected medicine</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="medicineChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <div>
+                    <h2>Inventory Intelligence</h2>
+                    <p id="inventorySubtitle">Live PHC stock position vs predicted demand</p>
+                </div>
+            </div>
+
+            <div class="inventory-field">
+                <span>Current stock</span>
+                <strong id="inventoryCurrentStock">—</strong>
+            </div>
+
+            <div class="inventory-field">
+                <span>Average daily consumption</span>
+                <strong id="inventoryDailyConsumption">—</strong>
+            </div>
+
+            <div class="inventory-field">
+                <span>Predicted 7-day demand</span>
+                <strong id="inventoryPredictedDemand">—</strong>
+            </div>
+
+            <div class="inventory-field">
+                <span>Expiry exposure</span>
+                <strong id="inventoryExpiry">—</strong>
+            </div>
+
+            <div class="inventory-field">
+                <span>Projected stock</span>
+                <strong id="inventoryProjectedStock">—</strong>
+            </div>
+
+            <div class="inventory-field">
+                <span>Recommended order / transfer</span>
+                <strong id="inventoryRecommendedOrder">—</strong>
+            </div>
+
+            <div class="medicine-info-box">
+                <strong id="inventoryLiveStatus">Inventory connected</strong>
+                <p id="inventoryLiveMeta">
+                    Stock + consumption + expiry + demand forecast → stockout risk → recommended action.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- LIVE RESOURCE REDISTRIBUTION -->
+    <div class="card redistribution-card">
+
+        <div class="section-header">
+            <div>
+                <h2>🚚 Smart Resource Redistribution</h2>
+                <p id="redistributionSubtitle">
+                    Select a PHC and medicine to calculate a safe donor recommendation.
+                </p>
+            </div>
+
+            <div id="redistributionBadge"
+                 class="live-badge">
+                ANALYZING
+            </div>
+        </div>
+
+        <div id="redistributionStatus">
+            <div class="redistribution-empty">
+                Loading redistribution analysis...
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ANALYTICS
+===================================================== -->
+
+<section id="analytics" class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>📊 Analytics</h2>
+
+            <p>
+                Compare disease and healthcare indicators
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="chart-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>Disease Comparison</h2>
+
+                <p>
+                    Comparative visualization
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="chart-container">
+
+            <canvas id="comparisonChart"></canvas>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     AI PREDICTIONS
+===================================================== -->
+
+<section id="prediction" class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>🤖 AI Predictions</h2>
+
+            <p>
+                Early-warning and demand prediction engine
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="ai-box">
+
+        <div class="ai-title">
+
+            <span>🧠</span>
+
+            <div>
+
+                <h2>AI Early Warning Engine</h2>
+
+                <small>
+                    Disease + patient + medicine signals
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="three-col">
+
+            <div class="prediction-box">
+
+                <small>
+                    DISEASE SURGE
+                </small>
+
+                <strong class="red">
+                    Dengue
+                </strong>
+
+                <p style="color:#71879a;font-size:11px;margin-top:6px">
+                    Requires monitoring
+                </p>
+
+            </div>
+
+
+            <div class="prediction-box">
+
+                <small>
+                    DEMAND SIGNAL
+                </small>
+
+                <strong class="yellow">
+                    Medicine
+                </strong>
+
+                <p style="color:#71879a;font-size:11px;margin-top:6px">
+                    Inventory data required
+                </p>
+
+            </div>
+
+
+            <div class="prediction-box">
+
+                <small>
+                    ACTION
+                </small>
+
+                <strong class="green">
+                    Review
+                </strong>
+
+                <p style="color:#71879a;font-size:11px;margin-top:6px">
+                    Inspect affected PHCs
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PRIORITY ACTIONS
+===================================================== -->
+
+<section id="actions" class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>🚨 Priority Actions</h2>
+
+            <p>
+                Issues requiring operational attention
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="action-row">
+
+            <div class="action-number">
+                01
+            </div>
+
+            <div>
+
+                <div class="action-title">
+                    Dengue monitoring signal
+                </div>
+
+                <div class="action-sub">
+                    Review disease trend and affected PHCs
+                </div>
+
+            </div>
+
+            <div class="badge badge-critical">
+                CRITICAL
+            </div>
+
+            <button class="btn"
+                    onclick="showSectionById('disease')">
+                VIEW
+            </button>
+
+        </div>
+
+
+        <div class="action-row">
+
+            <div class="action-number">
+                02
+            </div>
+
+            <div>
+
+                <div class="action-title">
+                    Medicine inventory review
+                </div>
+
+                <div class="action-sub">
+                    Connect live inventory to calculate stockout risk
+                </div>
+
+            </div>
+
+            <div class="badge badge-high">
+                HIGH
+            </div>
+
+            <button class="btn"
+                    onclick="showSectionById('medicine')">
+                VIEW
+            </button>
+
+        </div>
+
+
+        <div class="action-row">
+
+            <div class="action-number">
+                03
+            </div>
+
+            <div>
+
+                <div class="action-title">
+                    PHC data monitoring
+                </div>
+
+                <div class="action-sub">
+                    Review PHC-level reporting availability
+                </div>
+
+            </div>
+
+            <div class="badge badge-low">
+                MONITOR
+            </div>
+
+            <button class="btn"
+                    onclick="showSectionById('phc')">
+                VIEW
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function showSection(id, element) {
+
+    document.querySelectorAll(".section")
+        .forEach(section => {
+            section.classList.remove("active");
+        });
+
+    document.getElementById(id)
+        .classList.add("active");
+
+
+    document.querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    element.classList.add("active");
+
+
+    const titles = {
+
+        dashboard: [
+            "Healthcare Command Center",
+            "AI-powered monitoring of Primary Health Centre networks"
+        ],
+
+        phc: [
+            "PHC Intelligence",
+            "Monitor Primary Health Centre activity"
+        ],
+
+        disease: [
+            "Disease Intelligence",
+            "Track disease patterns and early warning signals"
+        ],
+
+        medicine: [
+            "Medicine Intelligence",
+            "Monitor medicine availability and demand"
+        ],
+
+        analytics: [
+            "Healthcare Analytics",
+            "Compare health indicators across the network"
+        ],
+
+        prediction: [
+            "AI Predictions",
+            "Early warning and demand prediction engine"
+        ],
+
+        actions: [
+            "Priority Actions",
+            "Operational issues requiring attention"
+        ]
+
+    };
+
+
+    document.getElementById("pageHeading").innerText =
+        titles[id][0];
+
+    document.getElementById("pageDescription").innerText =
+        titles[id][1];
+
+}
+
+
+function showSectionById(id) {
+
+    const navItems = document.querySelectorAll(".nav-item");
+
+    navItems.forEach(item => {
+
+        if (
+            item.getAttribute("onclick") &&
+            item.getAttribute("onclick").includes("'" + id + "'")
+        ) {
+
+            showSection(id,item);
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   DISEASE DATA
+===================================================== */
+
+let diseaseData = {};
+let diseaseChart;
+
+
+/* ==========================================
+   LOAD DISEASE DATA FROM BACKEND
+========================================== */
+
+async function loadDiseases() {
+
+    try {
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/api/diseases"
+            );
+
+        const data =
+            await response.json();
+
+
+        data.results.forEach(item => {
+
+            diseaseData[item.disease] = {
+
+                values: item.values,
+
+                signal: item.signal,
+
+                risk: item.risk
+
+            };
+
+        });
+
+
+        console.log(
+            "Disease data loaded:",
+            diseaseData
+        );
+
+
+        createDiseaseChart("Dengue");
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Backend connection failed:",
+            error
+        );
+
+        alert(
+            "Backend is not running. Start FastAPI first."
+        );
+
+    }
+
+}
+
+/* =====================================================
+   DISEASE GRAPH
+===================================================== */
+
+
+function createDiseaseChart(disease) {
+
+    const data = diseaseData[disease];
+
+    const ctx =
+        document.getElementById("diseaseChart")
+        .getContext("2d");
+
+
+    if (diseaseChart) {
+        diseaseChart.destroy();
+    }
+
+
+    diseaseChart = new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Day 1",
+                "Day 2",
+                "Day 3",
+                "Day 4",
+                "Day 5",
+                "Day 6",
+                "Day 7"
+            ],
+
+            datasets: [{
+
+                label: disease + " cases",
+
+                data: data.values,
+
+                borderWidth: 3,
+
+                tension: 0.4,
+
+                fill: true,
+
+                backgroundColor:
+                    "rgba(0,210,190,0.08)",
+
+                borderColor:
+                    "#36dcca",
+
+                pointBackgroundColor:
+                    "#36dcca",
+
+                pointRadius: 4
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    labels: {
+                        color: "#8fa3b5"
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   DISEASE SELECT
+===================================================== */
+
+function selectDisease(disease,button) {
+
+    document.querySelectorAll(".disease-btn")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+    button.classList.add("active");
+
+
+    updateDisease(disease);
+
+}
+
+
+function selectDiseaseFromCard(disease) {
+
+    document.querySelectorAll(".disease-btn")
+        .forEach(btn => {
+
+            if (
+                btn.innerText
+                    .toLowerCase()
+                    .includes(disease.toLowerCase())
+            ) {
+
+                btn.classList.remove("active");
+
+                btn.classList.add("active");
+
+            }
+
+        });
+
+    updateDisease(disease);
+
+}
+
+
+function updateDisease(disease) {
+
+    document.getElementById("diseaseChartTitle")
+        .innerText =
+        disease + " — Case Trend";
+
+
+    document.getElementById("predictionDisease")
+        .innerText =
+        disease;
+
+
+    document.getElementById("currentSignal")
+        .innerText =
+        diseaseData[disease].signal;
+
+
+    createDiseaseChart(disease);
+
+}
+
+
+/* =====================================================
+   NETWORK CHART
+===================================================== */
+
+new Chart(
+    document.getElementById("networkChart"),
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun"
+            ],
+
+            datasets: [{
+
+                label: "Monitoring Activity",
+
+                data: [62,68,71,75,81,88],
+
+                borderColor: "#4b8dff",
+
+                backgroundColor:
+                    "rgba(75,141,255,0.08)",
+
+                fill: true,
+
+                tension: 0.4,
+
+                borderWidth: 3
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    labels: {
+                        color: "#8fa3b5"
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PHC CHART
+===================================================== */
+
+new Chart(
+    document.getElementById("phcChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Stable",
+                "Watch",
+                "Critical"
+            ],
+
+            datasets: [{
+
+                label: "PHCs",
+
+                data: [100,18,6],
+
+                backgroundColor: [
+                    "#35d8a5",
+                    "#f3c95d",
+                    "#ff6675"
+                ],
+
+                borderRadius: 8
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    labels: {
+                        color: "#8fa3b5"
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LIVE MEDICINE INTELLIGENCE
+===================================================== */
+
+const API_BASE = "http://127.0.0.1:8000";
+
+let medicineChart = null;
+let outbreakMode = false;
+
+const SURGE_FACTOR = 2.5;
+let networkInventory = [];
+let medicinePredictionData = null;
+let redistributionData = null;
+
+
+/* =====================================================
+   LOAD LIVE INVENTORY
+===================================================== */
+
+async function loadNetworkInventory() {
+
+    const response =
+        await fetch(
+            `${API_BASE}/api/inventory`
+        );
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Inventory API failed"
+        );
+
+    }
+
+    const data =
+        await response.json();
+
+    networkInventory =
+        Array.isArray(data.results)
+            ? data.results
+            : [];
+
+    populateLiveSelectors();
+
+    updateLiveMedicineCount();
+
+    console.log(
+        "Network inventory loaded:",
+        networkInventory
+    );
+
+}
+
+
+/* =====================================================
+   POPULATE PHC + MEDICINE SELECTORS
+===================================================== */
+
+function populateLiveSelectors() {
+
+    const phcSelect =
+        document.getElementById(
+            "phcSelector"
+        );
+
+    const medicineSelect =
+        document.getElementById(
+            "medicineSelector"
+        );
+
+
+    if (
+        !phcSelect
+        ||
+        !medicineSelect
+    ) {
+        return;
+    }
+
+
+    const phcs = [
+        ...new Set(
+            networkInventory
+                .map(item => item.phc)
+                .filter(Boolean)
+        )
+    ];
+
+
+    const medicines = [
+        ...new Set(
+            networkInventory
+                .map(item => item.medicine)
+                .filter(Boolean)
+        )
+    ];
+
+
+    const previousPHC =
+        phcSelect.value;
+
+    const previousMedicine =
+        medicineSelect.value;
+
+
+    phcSelect.innerHTML = "";
+
+    phcs.forEach(phc => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = phc;
+        option.textContent = phc;
+
+        phcSelect.appendChild(
+            option
+        );
+
+    });
+
+
+    medicineSelect.innerHTML = "";
+
+    medicines.forEach(
+        medicine => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = medicine;
+            option.textContent = medicine;
+
+            medicineSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (
+        phcs.includes(previousPHC)
+    ) {
+        phcSelect.value =
+            previousPHC;
+    }
+
+
+    if (
+        medicines.includes(previousMedicine)
+    ) {
+        medicineSelect.value =
+            previousMedicine;
+    }
+
+}
+
+
+function updateLiveMedicineCount() {
+
+    const count =
+        new Set(
+            networkInventory.map(
+                item => item.medicine
+            )
+        ).size;
+
+
+    const element =
+        document.getElementById(
+            "medicineCount"
+        );
+
+
+    if (element) {
+        element.innerText =
+            count || "—";
+    }
+
+}
+
+
+/* =====================================================
+   LOAD ML MEDICINE PREDICTIONS
+===================================================== */
+
+async function loadMedicinePredictions() {
+
+    const response =
+        await fetch(
+            `${API_BASE}/api/predictions`
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Prediction API failed"
+        );
+
+    }
+
+
+    medicinePredictionData =
+        await response.json();
+
+
+    window.medicinePredictionData =
+        medicinePredictionData;
+
+
+    console.log(
+        "ML medicine predictions:",
+        medicinePredictionData
+    );
+
+}
+
+
+/* =====================================================
+   RENDER MEDICINE FORECAST
+===================================================== */
+
+function renderMedicineForecast(
+    medicine
+) {
+
+    const prediction =
+        medicinePredictionData
+            ?.results
+            ?.find(
+                item =>
+                    item.medicine === medicine
+            );
+
+
+    const canvas =
+        document.getElementById(
+            "medicineChart"
+        );
+
+
+    if (
+        !canvas
+        ||
+        !prediction
+    ) {
+        return;
+    }
+
+
+    const forecast =
+        prediction.daily_forecast
+        ||
+        [];
+
+
+    const labels =
+        forecast.map(
+            item =>
+                item.date
+        );
+
+
+const values =
+    forecast.map(
+        item =>
+            Number(
+                item.predicted_demand
+            )
+            *
+            (
+                outbreakMode
+                    ? SURGE_FACTOR
+                    : 1
+            )
+    );
+
+
+    if (medicineChart) {
+        medicineChart.destroy();
+    }
+
+
+    medicineChart =
+        new Chart(
+            canvas,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels,
+
+                    datasets: [{
+
+                       label:
+    outbreakMode
+        ? `${medicine} — OUTBREAK SURGE`
+        : `${medicine} — ML Forecast`,
+
+                        data: values,
+
+                        borderColor:
+                            "#36dcca",
+
+                        backgroundColor:
+                            "rgba(54,220,202,0.08)",
+
+                        fill: true,
+
+                        tension: 0.4,
+
+                        borderWidth: 3,
+
+                        pointBackgroundColor:
+                            "#36dcca",
+
+                        pointRadius: 4
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            labels: {
+                                color: "#8fa3b5"
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+                                color: "#667c90"
+                            },
+
+                            grid: {
+                                color:
+                                    "rgba(255,255,255,0.04)"
+                            }
+
+                        },
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                color: "#667c90"
+                            },
+
+                            grid: {
+                                color:
+                                    "rgba(255,255,255,0.04)"
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+
+    const subtitle =
+        document.getElementById(
+            "medicineForecastSubtitle"
+        );
+
+
+    if (subtitle) {
+
+        subtitle.innerText =
+            `${medicine} · 7-day ML demand forecast`;
+
+    }
+
+}
+
+
+/* =====================================================
+   INVENTORY INTELLIGENCE
+===================================================== */
+
+function updateInventoryPanel(
+    phc,
+    medicine
+) {
+
+    const inventory =
+        networkInventory.find(
+            item =>
+                item.phc === phc
+                &&
+                item.medicine === medicine
+        );
+
+
+    if (!inventory) {
+        return;
+    }
+
+
+    setLiveText(
+        "inventoryCurrentStock",
+        inventory.current_stock
+    );
+
+
+    setLiveText(
+        "inventoryDailyConsumption",
+        inventory.daily_consumption
+    );
+
+
+    setLiveText(
+        "inventoryExpiry",
+        inventory.expiry_days != null
+            ? inventory.expiry_days + " days"
+            : "—"
+    );
+
+
+    const prediction =
+        medicinePredictionData
+            ?.results
+            ?.find(
+                item =>
+                    item.medicine === medicine
+            );
+
+
+    if (prediction) {
+
+const baseDemand =
+    Number(
+        prediction.predicted_7_day_demand
+    )
+    || 0;
+
+
+const demand =
+    baseDemand
+    *
+    (
+        outbreakMode
+            ? SURGE_FACTOR
+            : 1
+    );
+
+
+        const current =
+            Number(
+                inventory.current_stock
+            )
+            ||
+            0;
+
+
+        const incoming =
+            Number(
+                inventory.incoming_stock
+            )
+            ||
+            0;
+
+
+        const projected =
+            current
+            +
+            incoming
+            -
+            demand;
+
+
+        let recommended =
+            Number(
+                prediction.recommended_order
+            )
+            ||
+            0;
+
+
+        if (
+            redistributionData
+            &&
+            redistributionData.medicine
+                === medicine
+            &&
+            Number.isFinite(
+                Number(
+                    redistributionData.required_transfer
+                )
+            )
+        ) {
+
+            recommended =
+                Number(
+                    redistributionData.required_transfer
+                );
+
+        }
+
+
+        setLiveText(
+            "inventoryPredictedDemand",
+            Math.round(demand)
+        );
+
+
+        setLiveText(
+            "inventoryProjectedStock",
+            Math.round(projected)
+        );
+
+
+        setLiveText(
+            "inventoryRecommendedOrder",
+            Math.round(
+                Math.max(
+                    0,
+                    recommended
+                )
+            )
+        );
+
+    }
+
+
+    const liveStatus =
+        document.getElementById(
+            "inventoryLiveStatus"
+        );
+
+    const liveMeta =
+        document.getElementById(
+            "inventoryLiveMeta"
+        );
+
+
+    if (liveStatus) {
+
+        liveStatus.innerText =
+            `LIVE · ${phc} · ${medicine}`;
+
+    }
+
+
+    if (liveMeta) {
+
+        liveMeta.innerText =
+            `Current ${inventory.current_stock} · Incoming ${inventory.incoming_stock || 0} · Stock days ${inventory.stock_days ?? "—"} · Status ${inventory.status || "UNKNOWN"}`;
+
+    }
+
+}
+
+
+function setLiveText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.innerText =
+            value ?? "—";
+    }
+
+}
+
+
+/* =====================================================
+   REDISTRIBUTION
+===================================================== */
+
+async function refreshMedicineView() {
+
+    const phcSelect =
+        document.getElementById(
+            "phcSelector"
+        );
+
+    const medicineSelect =
+        document.getElementById(
+            "medicineSelector"
+        );
+
+
+    if (
+        !phcSelect
+        ||
+        !medicineSelect
+    ) {
+        return;
+    }
+
+
+    const phc =
+        phcSelect.value;
+
+    const medicine =
+        medicineSelect.value;
+
+
+    if (!phc || !medicine) {
+        return;
+    }
+
+
+    try {
+
+const response =
+    await fetch(
+        `${API_BASE}/api/redistribution/`
+        + encodeURIComponent(phc)
+        + "/"
+        + encodeURIComponent(medicine)
+        + "?surge_factor="
+        + encodeURIComponent(
+            outbreakMode
+                ? SURGE_FACTOR
+                : 1
+        )
+    );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Redistribution API failed"
+            );
+
+        }
+
+
+        redistributionData =
+            await response.json();
+
+
+        window.redistributionData =
+            redistributionData;
+
+
+        renderRedistribution(
+            redistributionData
+        );
+
+
+        updateInventoryPanel(
+            phc,
+            medicine
+        );
+
+
+        renderMedicineForecast(
+            medicine
+        );
+
+
+        console.log(
+            "Dynamic medicine view updated:",
+            phc,
+            medicine
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Dynamic medicine view failed:",
+            error
+        );
+
+
+        const container =
+            document.getElementById(
+                "redistributionStatus"
+            );
+
+
+        const badge =
+            document.getElementById(
+                "redistributionBadge"
+            );
+
+
+        if (badge) {
+
+            badge.innerText =
+                "ERROR";
+
+        }
+
+
+        if (container) {
+
+            container.innerHTML = `
+                <div class="redistribution-empty">
+                    Could not load redistribution analysis.
+                    Check that FastAPI is running.
+                </div>
+            `;
+
+        }
+
+    }
+
+}
+
+
+window.refreshMedicineView =
+    refreshMedicineView;
+
+
+function renderRedistribution(
+    data
+) {
+
+    const container =
+        document.getElementById(
+            "redistributionStatus"
+        );
+
+    const badge =
+        document.getElementById(
+            "redistributionBadge"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (data.error) {
+
+        if (badge) {
+
+            badge.innerText =
+                "ERROR";
+
+        }
+
+
+        container.innerHTML = `
+            <div class="redistribution-empty red">
+                ${data.error}
+            </div>
+        `;
+
+        return;
+
+    }
+
+if (badge) {
+    badge.innerText =
+        data.sos
+            ? (
+                data.recommendations &&
+                data.recommendations.some(
+                    item => Number(item.quantity) > 0
+                )
+                    ? "SOS / PARTIAL COVERAGE"
+                    : "SOS / NO FEASIBLE TRANSFER"
+            )
+            : "TRANSFER READY";
+}
+
+if (data.sos) {
+
+    container.className =
+        "notice sos";
+
+    const recommendations =
+        Array.isArray(data.recommendations)
+            ? data.recommendations
+            : [];
+
+    const totalAvailable =
+        recommendations.reduce(
+            (sum, item) =>
+                sum + Number(item.quantity || 0),
+            0
+        );
+
+    container.innerHTML = `
+
+        <div class="sos-title">
+            🚨 SOS — NETWORK RESOURCES INSUFFICIENT
+        </div>
+
+        <div style="margin-top:8px;">
+            ${data.recipient}
+            requires
+            ${data.medicine}.
+        </div>
+
+        <div style="margin-top:5px;">
+            Remaining unmet need:
+            <strong>
+                ${data.remaining_unmet_need}
+            </strong>
+        </div>
+
+        ${
+            recommendations.length
+                ? `
+                    <div style="margin-top:18px;">
+                        <strong>
+                            AVAILABLE NETWORK CONTRIBUTIONS
+                        </strong>
+                    </div>
+
+                    ${recommendations.map(
+                        (recommendation, index) => `
+
+                            <div
+                                style="
+                                    margin-top:12px;
+                                    padding:12px;
+                                    border-radius:10px;
+                                    background:rgba(255,255,255,.03);
+                                    border:1px solid rgba(255,255,255,.06);
+                                "
+                            >
+
+                                <strong>
+                                    ${index + 1}.
+                                    ${recommendation.source_phc}
+                                    →
+                                    ${recommendation.destination_phc}
+                                </strong>
+
+                                <div
+                                    style="
+                                        margin-top:5px;
+                                        color:#a9bdc9;
+                                    "
+                                >
+                                    Transfer:
+                                    <strong>
+                                        ${recommendation.quantity}
+                                    </strong>
+                                    ${recommendation.medicine}
+                                </div>
+
+                                <div
+                                    style="
+                                        margin-top:4px;
+                                        color:#a9bdc9;
+                                    "
+                                >
+                                    ${recommendation.distance_km}
+                                    km · ETA
+                                    ${recommendation.estimated_transport_hours}
+                                    hr
+                                </div>
+
+                                <div
+                                    style="
+                                        margin-top:4px;
+                                        color:#36dca7;
+                                    "
+                                >
+                                    Safe surplus:
+                                    ${recommendation.donor_safe_surplus}
+                                </div>
+
+                            </div>
+
+                        `
+                    ).join("")}
+
+                    <div style="margin-top:15px;">
+
+                        <strong>
+                            Network contribution:
+                            ${totalAvailable}
+                        </strong>
+
+                        <div
+                            style="
+                                margin-top:5px;
+                                color:#ff6877;
+                            "
+                        >
+                            Remaining after feasible transfers:
+                            ${data.remaining_unmet_need}
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="route"
+                        style="margin-top:15px;"
+                    >
+
+                        <div>
+                            <strong>
+                                Partial coverage available
+                            </strong>
+
+                            <div class="metric-small">
+                                Approve feasible transfers
+                                while the remaining shortage
+                                is escalated.
+                            </div>
+                        </div>
+
+                        <button
+                            class="btn"
+                            onclick="approveRedistribution()"
+                        >
+                            APPROVE AVAILABLE TRANSFERS
+                        </button>
+
+                    </div>
+                `
+                : `
+                    <div style="margin-top:15px;">
+                        No feasible donor transfer is currently available.
+                    </div>
+                `
+        }
+
+    `;
+
+    return;
+}
+const recommendations =
+    (data.recommendations || [])
+        .filter(
+            item =>
+                Number(item.quantity || 0) > 0
+        );
+
+
+    if (!recommendations.length) {
+
+        if (badge) {
+
+            badge.innerText =
+                "NO TRANSFER";
+
+        }
+
+
+        container.innerHTML = `
+
+            <div style="
+                padding:14px;
+                border-radius:10px;
+                background:rgba(54,220,167,0.05);
+                border:1px solid rgba(54,220,167,0.14);
+            ">
+
+                <strong style="color:#36dca7;">
+                    ✓ No redistribution required
+                </strong>
+
+                <div style="
+                    margin-top:5px;
+                    color:#8da0b1;
+                ">
+
+                    ${data.recipient}
+                    can currently cover
+                    the projected
+                    ${data.medicine}
+                    requirement.
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    if (badge) {
+
+badge.innerText =
+    data.sos
+        ? (
+            data.recommendations &&
+            data.recommendations.some(
+                item => Number(item.quantity) > 0
+            )
+                ? "SOS / PARTIAL COVERAGE"
+                : "SOS / NO FEASIBLE TRANSFER"
+        )
+        : "TRANSFER READY";
+
+    }
+
+
+    const recommendation =
+        recommendations[0];
+
+
+   const totalTransfer =
+    recommendations.reduce(
+        (sum, item) =>
+            sum + Number(item.quantity || 0),
+        0
+    );
+
+
+const transferRows =
+    recommendations.map(
+        (item, index) => `
+
+            <div
+                style="
+                    padding:14px 0;
+                    border-bottom:
+                        1px solid
+                        rgba(255,255,255,.06);
+                "
+            >
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:20px;
+                    "
+                >
+
+                    <div>
+
+                        <div
+                            style="
+                                font-weight:800;
+                                font-size:14px;
+                            "
+                        >
+                            ${index + 1}.
+                            ${item.source_phc}
+                            →
+                            ${item.destination_phc}
+                        </div>
+
+
+                        <div
+                            class="metric-change"
+                            style="
+                                margin-top:5px;
+                            "
+                        >
+                            ${item.medicine}
+                            ·
+                            ${item.distance_km} km
+                            ·
+                            ETA
+                            ${item.estimated_transport_hours} hr
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            text-align:right;
+                        "
+                    >
+
+                        <div
+                            class="metric-value"
+                            style="
+                                font-size:20px;
+                            "
+                        >
+                            ${item.quantity}
+                        </div>
+
+
+                        <div
+                            class="metric-change green"
+                        >
+                            Safe surplus:
+                            ${item.donor_safe_surplus}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `
+    ).join("");
+
+
+container.innerHTML = `
+
+    <div class="redistribution-grid">
+
+        <div class="redistribution-metric">
+
+            <div class="metric-label">
+                RECIPIENT
+            </div>
+
+            <div
+                class="metric-value"
+                style="font-size:22px;"
+            >
+                ${data.recipient}
+            </div>
+
+        </div>
+
+
+        <div class="redistribution-metric">
+
+            <div class="metric-label">
+                REQUIRED
+            </div>
+
+            <div
+                class="metric-value"
+                style="font-size:22px;"
+            >
+                ${data.required_transfer}
+            </div>
+
+            <div class="metric-change blue">
+                ${data.medicine}
+            </div>
+
+        </div>
+
+
+        <div class="redistribution-metric">
+
+            <div class="metric-label">
+                TOTAL TRANSFER
+            </div>
+
+            <div
+                class="metric-value"
+                style="font-size:22px;"
+            >
+                ${totalTransfer}
+            </div>
+
+            <div class="metric-change green">
+                From ${recommendations.length} donor(s)
+            </div>
+
+        </div>
+
+
+        <div class="redistribution-metric">
+
+            <div class="metric-label">
+                REMAINING NEED
+            </div>
+
+            <div
+                class="metric-value"
+                style="font-size:22px;"
+            >
+                ${data.remaining_unmet_need}
+            </div>
+
+            <div
+                class="metric-change ${
+                    Number(data.remaining_unmet_need || 0) > 0
+                        ? "red"
+                        : "green"
+                }"
+            >
+                ${
+                    Number(data.remaining_unmet_need || 0) > 0
+                        ? "Still unmet"
+                        : "Fully covered"
+                }
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="redistribution-route">
+
+        <div
+            style="
+                font-weight:800;
+                margin-bottom:8px;
+            "
+        >
+            RECOMMENDED DONOR TRANSFERS
+        </div>
+
+
+        ${transferRows}
+
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                margin-top:16px;
+            "
+        >
+
+            <div>
+
+                <strong>
+                    ${data.recipient}
+                    ←
+                    ${totalTransfer}
+                    ${data.medicine}
+                </strong>
+
+                <div
+                    class="metric-change"
+                    style="margin-top:4px;"
+                >
+                    ${
+                        Number(data.remaining_unmet_need || 0) > 0
+                            ? `Still unmet: ${data.remaining_unmet_need}`
+                            : "Full requirement covered"
+                    }
+                </div>
+
+            </div>
+
+
+            ${
+                Number(data.remaining_unmet_need || 0) === 0
+                    ? `
+                        <button
+                            class="btn"
+                            onclick="approveRedistribution()"
+                        >
+                            APPROVE ALL TRANSFERS
+                        </button>
+                    `
+                    : `
+                        <span class="live-badge"
+                              style="
+                                  color:#ff6877;
+                                  border-color:
+                                      rgba(255,104,119,.25);
+                              "
+                        >
+                            🚨 SOS ·
+                            ${data.remaining_unmet_need}
+                            UNMET
+                        </span>
+                    `
+            }
+
+        </div>
+
+    </div>
+
+`;
+
+}
+function toggleOutbreakScenario() {
+
+    outbreakMode = true;
+
+    const outbreakButton =
+        document.getElementById(
+            "outbreakButton"
+        );
+
+    const resetButton =
+        document.getElementById(
+            "resetScenarioButton"
+        );
+
+    const banner =
+        document.getElementById(
+            "outbreakBanner"
+        );
+
+
+    if (outbreakButton) {
+        outbreakButton.style.display =
+            "none";
+    }
+
+    if (resetButton) {
+        resetButton.style.display =
+            "inline-block";
+    }
+
+    if (banner) {
+        banner.style.display =
+            "inline-block";
+    }
+
+
+    refreshMedicineView();
+}
+
+
+function resetOutbreakScenario() {
+
+    outbreakMode = false;
+
+    const outbreakButton =
+        document.getElementById(
+            "outbreakButton"
+        );
+
+    const resetButton =
+        document.getElementById(
+            "resetScenarioButton"
+        );
+
+    const banner =
+        document.getElementById(
+            "outbreakBanner"
+        );
+
+
+    if (outbreakButton) {
+        outbreakButton.style.display =
+            "inline-block";
+    }
+
+    if (resetButton) {
+        resetButton.style.display =
+            "none";
+    }
+
+    if (banner) {
+        banner.style.display =
+            "none";
+    }
+
+
+    refreshMedicineView();
+}
+
+
+window.toggleOutbreakScenario =
+    toggleOutbreakScenario;
+
+window.resetOutbreakScenario =
+    resetOutbreakScenario;
+
+
+window.renderRedistribution =
+    renderRedistribution;
+
+
+/* =====================================================
+   APPROVE TRANSFER
+===================================================== */
+
+async function approveRedistribution() {
+
+    const data = window.redistributionData;
+
+    if (
+        !data ||
+        !Array.isArray(data.recommendations) ||
+        !data.recommendations.length
+    ) {
+        alert("No transfer recommendation available.");
+        return;
+    }
+
+    const recommendations =
+        data.recommendations.filter(
+            item => Number(item.quantity) > 0
+        );
+
+    if (!recommendations.length) {
+        alert("No positive transfer quantity is available.");
+        return;
+    }
+
+    try {
+
+        for (const recommendation of recommendations) {
+
+            const quantity =
+                Number(recommendation.quantity);
+
+            if (
+                !Number.isFinite(quantity) ||
+                quantity <= 0
+            ) {
+                continue;
+            }
+
+            const response = await fetch(
+                `${API_BASE}/api/transfers/approve`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        source_phc:
+                            recommendation.source_phc,
+
+                        destination_phc:
+                            recommendation.destination_phc,
+
+                        medicine:
+                            recommendation.medicine,
+
+                        quantity:
+                            quantity
+                    })
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+                throw new Error(
+                    result.message ||
+                    "Transfer failed"
+                );
+            }
+        }
+
+        alert(
+            "All recommended transfers approved successfully."
+        );
+
+        await loadNetworkInventory();
+        await loadMedicinePredictions();
+        await refreshMedicineView();
+
+    } catch (error) {
+
+        console.error(
+            "Transfer approval failed:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Transfer could not be approved."
+        );
+    }
+}
+window.approveRedistribution =
+    approveRedistribution;
+
+function updateCommandCenter() {
+
+    const phcCount =
+        new Set(
+            networkInventory.map(
+                item => item.phc
+            )
+        ).size;
+
+
+    const diseaseCount =
+        Object.keys(
+            diseaseData
+        ).length;
+
+
+    const medicineCount =
+        new Set(
+            networkInventory.map(
+                item => item.medicine
+            )
+        ).size;
+
+
+    const alertCount =
+        networkInventory.filter(
+            item => {
+
+                const status =
+                    String(
+                        item.status || ""
+                    ).toUpperCase();
+
+                return (
+                    status === "CRITICAL" ||
+                    status === "LOW"
+                );
+
+            }
+        ).length;
+
+
+    const phcElement =
+        document.getElementById(
+            "dashboardPhcCount"
+        );
+
+    const diseaseElement =
+        document.getElementById(
+            "dashboardDiseaseCount"
+        );
+
+    const medicineElement =
+        document.getElementById(
+            "dashboardMedicineCount"
+        );
+
+    const alertElement =
+        document.getElementById(
+            "dashboardAlertCount"
+        );
+
+
+    if (phcElement) {
+        phcElement.innerText =
+            phcCount;
+    }
+
+    if (diseaseElement) {
+        diseaseElement.innerText =
+            diseaseCount;
+    }
+
+    if (medicineElement) {
+        medicineElement.innerText =
+            medicineCount;
+    }
+
+    if (alertElement) {
+        alertElement.innerText =
+            alertCount;
+    }
+
+}
+/* =====================================================
+   START LIVE MEDICINE
+===================================================== */
+
+async function initializeLiveMedicine() {
+
+    try {
+
+        await loadNetworkInventory();
+
+        await loadMedicinePredictions();
+
+        await refreshMedicineView();
+
+        updateCommandCenter();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Live medicine initialization failed:",
+            error
+        );
+
+    }
+
+}
+
+
+initializeLiveMedicine();
+
+
+/* =====================================================
+   COMPARISON CHART
+===================================================== */
+
+new Chart(
+    document.getElementById("comparisonChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Dengue",
+                "Malaria",
+                "Chikungunya",
+                "Jaundice",
+                "Typhoid",
+                "Cold/Cough",
+                "Viral Fever"
+            ],
+
+            datasets: [{
+
+                label: "Monitoring Indicator",
+
+                data: [
+                    82,
+                    58,
+                    61,
+                    40,
+                    63,
+                    74,
+                    69
+                ],
+
+                backgroundColor: "#36dcca",
+
+                borderRadius: 7
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    labels: {
+                        color: "#8fa3b5"
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+                    ticks: {
+                        color: "#667c90"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.04)"
+                    }
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+
+
+/* =====================================================
+   MEDICINE REFERENCE FILTER
+===================================================== */
+
+const prototypeMedicineCount = 19;
+
+const medicineCountElement =
+    document.getElementById("medicineCount");
+
+if (medicineCountElement) {
+    medicineCountElement.innerText = prototypeMedicineCount;
+}
+
+function filterMedicineTable(condition) {
+
+    const rows =
+        document.querySelectorAll(
+            "#medicineReferenceTable tbody tr"
+        );
+
+    rows.forEach(row => {
+
+        const rowCondition =
+            row.cells[0].innerText
+                .trim()
+                .toLowerCase();
+
+        row.style.display =
+            condition === "all" ||
+            rowCondition === condition
+                ? ""
+                : "none";
+
+    });
+}
+
+
+/* =====================================================
+   BACKEND STARTUP
+===================================================== */
+
+window.refreshMedicineView =
+    refreshMedicineView;
+
+window.approveRedistribution =
+    approveRedistribution;
+
+window.selectDisease =
+    selectDisease;
+
+window.selectDiseaseFromCard =
+    selectDiseaseFromCard;
+
+window.updateDisease =
+    updateDisease;
+
+window.filterMedicineTable =
+    filterMedicineTable;
+
+
+loadDiseases();
+
+</script>
+
+</body>
+</html>

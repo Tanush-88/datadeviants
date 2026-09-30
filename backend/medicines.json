@@ -1,0 +1,38 @@
+{
+    "medicines": [
+        {
+            "name": "ORS",
+            "used_for": ["Dengue", "Diarrhea", "Viral Fever"],
+            "unit": "packets",
+            "average_daily_consumption": 35
+        },
+
+        {
+            "name": "Paracetamol",
+            "used_for": ["Dengue", "Malaria", "Chikungunya", "Viral Fever", "Cold / Cough"],
+            "unit": "tablets",
+            "average_daily_consumption": 50
+        },
+
+        {
+            "name": "Antimalarial",
+            "used_for": ["Malaria"],
+            "unit": "tablets",
+            "average_daily_consumption": 20
+        },
+
+        {
+            "name": "Azithromycin",
+            "used_for": ["Typhoid", "Respiratory infections"],
+            "unit": "tablets",
+            "average_daily_consumption": 15
+        },
+
+        {
+            "name": "IV Fluids",
+            "used_for": ["Dengue", "Viral Fever", "Dehydration"],
+            "unit": "bottles",
+            "average_daily_consumption": 12
+        }
+    ]
+}

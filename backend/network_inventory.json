@@ -1,0 +1,204 @@
+{
+    "inventory": [
+        {
+            "phc": "PHC-A",
+            "medicine": "ORS",
+            "current_stock": 674,
+            "incoming_stock": 100,
+            "incoming_in_days": 5,
+            "expiry_days": 45
+        },
+        {
+            "phc": "PHC-A",
+            "medicine": "Paracetamol",
+            "current_stock": 1052,
+            "incoming_stock": 100,
+            "incoming_in_days": 5,
+            "expiry_days": 120
+        },
+        {
+            "phc": "PHC-A",
+            "medicine": "Antimalarial",
+            "current_stock": 75,
+            "incoming_stock": 50,
+            "incoming_in_days": 5,
+            "expiry_days": 25
+        },
+        {
+            "phc": "PHC-A",
+            "medicine": "Azithromycin",
+            "current_stock": 279,
+            "incoming_stock": 50,
+            "incoming_in_days": 5,
+            "expiry_days": 90
+        },
+        {
+            "phc": "PHC-A",
+            "medicine": "IV Fluids",
+            "current_stock": 219,
+            "incoming_stock": 40,
+            "incoming_in_days": 5,
+            "expiry_days": 20
+        },
+        {
+            "phc": "PHC-B",
+            "medicine": "ORS",
+            "current_stock": 1280,
+            "incoming_stock": 300,
+            "incoming_in_days": 3,
+            "expiry_days": 45
+        },
+        {
+            "phc": "PHC-B",
+            "medicine": "Paracetamol",
+            "current_stock": 1398,
+            "incoming_stock": 300,
+            "incoming_in_days": 3,
+            "expiry_days": 120
+        },
+        {
+            "phc": "PHC-B",
+            "medicine": "Antimalarial",
+            "current_stock": 231,
+            "incoming_stock": 150,
+            "incoming_in_days": 3,
+            "expiry_days": 25
+        },
+        {
+            "phc": "PHC-B",
+            "medicine": "Azithromycin",
+            "current_stock": 314,
+            "incoming_stock": 150,
+            "incoming_in_days": 3,
+            "expiry_days": 90
+        },
+        {
+            "phc": "PHC-B",
+            "medicine": "IV Fluids",
+            "current_stock": 102,
+            "incoming_stock": 120,
+            "incoming_in_days": 3,
+            "expiry_days": 20
+        },
+        {
+            "phc": "PHC-C",
+            "medicine": "ORS",
+            "current_stock": 606,
+            "incoming_stock": 200,
+            "incoming_in_days": 5,
+            "expiry_days": 45
+        },
+        {
+            "phc": "PHC-C",
+            "medicine": "Paracetamol",
+            "current_stock": 910,
+            "incoming_stock": 200,
+            "incoming_in_days": 5,
+            "expiry_days": 120
+        },
+        {
+            "phc": "PHC-C",
+            "medicine": "Antimalarial",
+            "current_stock": 225,
+            "incoming_stock": 100,
+            "incoming_in_days": 5,
+            "expiry_days": 25
+        },
+        {
+            "phc": "PHC-C",
+            "medicine": "Azithromycin",
+            "current_stock": 218,
+            "incoming_stock": 100,
+            "incoming_in_days": 5,
+            "expiry_days": 90
+        },
+        {
+            "phc": "PHC-C",
+            "medicine": "IV Fluids",
+            "current_stock": 170,
+            "incoming_stock": 80,
+            "incoming_in_days": 5,
+            "expiry_days": 20
+        },
+        {
+            "phc": "PHC-D",
+            "medicine": "ORS",
+            "current_stock": 640,
+            "incoming_stock": 200,
+            "incoming_in_days": 2,
+            "expiry_days": 45
+        },
+        {
+            "phc": "PHC-D",
+            "medicine": "Paracetamol",
+            "current_stock": 840,
+            "incoming_stock": 200,
+            "incoming_in_days": 2,
+            "expiry_days": 120
+        },
+        {
+            "phc": "PHC-D",
+            "medicine": "Antimalarial",
+            "current_stock": 219,
+            "incoming_stock": 100,
+            "incoming_in_days": 2,
+            "expiry_days": 25
+        },
+        {
+            "phc": "PHC-D",
+            "medicine": "Azithromycin",
+            "current_stock": 240,
+            "incoming_stock": 100,
+            "incoming_in_days": 2,
+            "expiry_days": 90
+        },
+        {
+            "phc": "PHC-D",
+            "medicine": "IV Fluids",
+            "current_stock": 179,
+            "incoming_stock": 80,
+            "incoming_in_days": 2,
+            "expiry_days": 20
+        },
+        {
+            "phc": "PHC-E",
+            "medicine": "ORS",
+            "current_stock": 480,
+            "incoming_stock": 100,
+            "incoming_in_days": 8,
+            "expiry_days": 45
+        },
+        {
+            "phc": "PHC-E",
+            "medicine": "Paracetamol",
+            "current_stock": 630,
+            "incoming_stock": 100,
+            "incoming_in_days": 8,
+            "expiry_days": 120
+        },
+        {
+            "phc": "PHC-E",
+            "medicine": "Antimalarial",
+            "current_stock": 112,
+            "incoming_stock": 50,
+            "incoming_in_days": 8,
+            "expiry_days": 25
+        },
+        {
+            "phc": "PHC-E",
+            "medicine": "Azithromycin",
+            "current_stock": 329,
+            "incoming_stock": 50,
+            "incoming_in_days": 8,
+            "expiry_days": 90
+        },
+        {
+            "phc": "PHC-E",
+            "medicine": "IV Fluids",
+            "current_stock": 250,
+            "incoming_stock": 40,
+            "incoming_in_days": 8,
+            "expiry_days": 20
+        }
+    ]
+}

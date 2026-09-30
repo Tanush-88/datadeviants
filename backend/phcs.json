@@ -1,0 +1,34 @@
+{
+    "phcs": [
+        {
+            "phc": "PHC-A",
+            "latitude": 19.0,
+            "longitude": 73.0,
+            "demand_factor": 1.0
+        },
+        {
+            "phc": "PHC-B",
+            "latitude": 19.03,
+            "longitude": 73.02,
+            "demand_factor": 0.8
+        },
+        {
+            "phc": "PHC-C",
+            "latitude": 19.06,
+            "longitude": 73.01,
+            "demand_factor": 0.9
+        },
+        {
+            "phc": "PHC-D",
+            "latitude": 19.01,
+            "longitude": 73.07,
+            "demand_factor": 1.1
+        },
+        {
+            "phc": "PHC-E",
+            "latitude": 19.09,
+            "longitude": 73.06,
+            "demand_factor": 1.2
+        }
+    ]
+}

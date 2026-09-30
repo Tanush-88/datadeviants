@@ -1,0 +1,43 @@
+{
+    "Dengue": {
+        "values": [12, 15, 18, 21, 25, 29, 34],
+        "signal": "RISING",
+        "risk": "HIGH"
+    },
+
+    "Malaria": {
+        "values": [18, 17, 16, 18, 20, 22, 24],
+        "signal": "RISING",
+        "risk": "MEDIUM"
+    },
+
+    "Chikungunya": {
+        "values": [8, 9, 10, 12, 14, 15, 17],
+        "signal": "RISING",
+        "risk": "MEDIUM"
+    },
+
+    "Jaundice": {
+        "values": [10, 11, 10, 9, 11, 12, 12],
+        "signal": "STABLE",
+        "risk": "LOW"
+    },
+
+    "Typhoid": {
+        "values": [14, 15, 17, 18, 19, 21, 23],
+        "signal": "RISING",
+        "risk": "MEDIUM"
+    },
+
+    "Cold / Cough": {
+        "values": [30, 32, 31, 29, 33, 35, 37],
+        "signal": "RISING",
+        "risk": "MEDIUM"
+    },
+
+    "Viral Fever": {
+        "values": [20, 21, 22, 21, 23, 24, 25],
+        "signal": "RISING",
+        "risk": "MEDIUM"
+    }
+}
